@@ -1,5 +1,6 @@
 # Javelin
 Javelin: High-Performance Enterprise Grade LLM Gateway & Model Router
+
 www.getjavelin.io
 
 Large Language Models (LLMs) are powerful tools that offer a wide range of potential applications to add value to businesses. However, making these LLMs accessible to various teams and individuals in an organization presents security, cost management, and data handling challenges, including data leaks and intellectual property & PII/PHI risks.
