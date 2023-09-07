@@ -8,7 +8,7 @@ on:
 env:
   REGISTRY: ghcr.io
   PRIVATE_IMAGE_NAME: getjavelin/javelin-core/javelin-core
-  PUBLIC_IMAGE_NAME: getjavelin/javelin
+  PUBLIC_IMAGE_NAME: getjavelin/javelin/javelin
 
 jobs:
   public-repo:
