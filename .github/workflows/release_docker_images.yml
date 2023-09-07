@@ -1,0 +1,34 @@
+name: Publish Docker image
+
+on: 
+  release:
+    types: [created]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  PRIVATE_IMAGE_NAME: getjavelin/javelin-core
+  PUBLIC_IMAGE_NAME: getjavelin/javelin
+
+jobs:
+  public-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest image from private repo
+        run: docker pull ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest
+
+      - name: Tag image for public repo
+        run: docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
+
+      - name: Push Docker image to public repo
+        run: docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
