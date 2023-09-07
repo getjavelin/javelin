@@ -27,8 +27,20 @@ jobs:
       - name: Pull latest image from private repo
         run: docker pull ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest
 
+      - name: Retrieve Version and Description
+        id: retrieve_details
+        run: |
+          VERSION=$(docker inspect --format '{{ index .Config.Labels "version"}}' ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest)
+          DESCRIPTION=$(docker inspect --format '{{ index .Config.Labels "description"}}' ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest)
+          echo "::set-output name=version::${VERSION}"
+          echo "::set-output name=description::${DESCRIPTION}"
+
       - name: Tag image for public repo
-        run: docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ steps.retrieve_details.outputs.version }}
+          docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
 
       - name: Push Docker image to public repo
-        run: docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ steps.retrieve_details.outputs.version }}
+          docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
