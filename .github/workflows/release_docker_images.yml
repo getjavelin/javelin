@@ -22,7 +22,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_PULLFROMPRIVATE }}
 
       - name: Pull latest image from private repo
         run: docker pull ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest
