@@ -9,6 +9,7 @@ env:
   REGISTRY: ghcr.io
   PRIVATE_IMAGE_NAME: getjavelin/javelin-core/javelin-core
   PUBLIC_IMAGE_NAME: getjavelin/javelin
+  TAG: ${{ github.event.release.tag_name }} # Grab the tag name from the release event
 
 jobs:
   public-repo:
@@ -24,23 +25,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PULLFROMPRIVATE }}
 
-      - name: Pull latest image from private repo
-        run: docker pull ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest
+      - name: Pull image from private repo
+        run: docker pull ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:${{ env.TAG }}
 
-      - name: Retrieve Version and Description
-        id: retrieve_details
-        run: |
-          VERSION=$(docker inspect --format '{{ index .Config.Labels "version"}}' ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest)
-          DESCRIPTION=$(docker inspect --format '{{ index .Config.Labels "description"}}' ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest)
-          echo "::set-output name=version::${VERSION}"
-          echo "::set-output name=description::${DESCRIPTION}"
+      - name: Tag image for public repo with version
+        run: docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:${{ env.TAG }} ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ env.TAG }}
 
-      - name: Tag image for public repo
-        run: |
-          docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ steps.retrieve_details.outputs.version }}
-          docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
+      - name: Tag image for public repo as latest
+        run: docker tag ${{ env.REGISTRY }}/${{ env.PRIVATE_IMAGE_NAME }}:${{ env.TAG }} ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
 
-      - name: Push Docker image to public repo
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ steps.retrieve_details.outputs.version }}
-          docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
+      - name: Push Docker image to public repo with version
+        run: docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:${{ env.TAG }}
+
+      - name: Push Docker image to public repo as latest
+        run: docker push ${{ env.REGISTRY }}/${{ env.PUBLIC_IMAGE_NAME }}:latest
