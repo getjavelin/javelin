@@ -29,4 +29,13 @@ Javelin equips security and ML teams with tools to:
 	•	Launch structured and custom scans against LLM endpoints.
 	•	Use curated libraries of attack prompts or auto-generate mutations via LLM agents.
 	•	Test against taxonomies of risks (e.g., prompt injection → system prompt leak → disclose_system_vars).
+⸻
+
+## 🚀 Getting Started & Next Steps
+
+*   **Official Website:** [Link to Javelin's website]
+*   **Full Documentation:** [Link to detailed documentation]
+*   **Developer SDKs:** [Link to Python SDK, etc., if applicable, e.g., https://github.com/getjavelin/javelin-python]
+*   **Community/Support:** [Link to community forum, Discord, or support channel]
+*   **Contact Us:** [Preferred contact email or link]
 
